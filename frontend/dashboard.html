@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoTeleBot Dashboard</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📊 CryptoTeleBot</h1>
+            <div class="user-info">
+                <span id="username">Загрузка...</span>
+            </div>
+        </header>
+
+        <main class="main">
+            <!-- Секция баланса -->
+            <section class="balance-section">
+                <h2>💰 Баланс</h2>
+                <div class="balance-cards">
+                    <div class="balance-card">
+                        <h3>TON Кошелек</h3>
+                        <div class="balance-amount">
+                            <span id="ton-balance">0.00</span> TON
+                        </div>
+                        <div class="balance-usd">
+                            ≈ $<span id="ton-usd">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-card">
+                        <h3>Торговый баланс</h3>
+                        <div class="balance-amount">
+                            $<span id="trading-balance">0.00</span>
+                        </div>
+                        <div class="balance-change">
+                            <span id="balance-change">+0.00%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция торговых сигналов -->
+            <section class="signals-section">
+                <h2>🎯 Торговые сигналы</h2>
+                <div class="signals-container" id="signals-container">
+                    <div class="loading">Загрузка сигналов...</div>
+                </div>
+            </section>
+
+            <!-- Секция открытых позиций -->
+            <section class="positions-section">
+                <h2>📈 Открытые позиции</h2>
+                <div class="positions-container" id="positions-container">
+                    <div class="loading">Загрузка позиций...</div>
+                </div>
+            </section>
+
+            <!-- График -->
+            <section class="chart-section">
+                <h2>📊 График BTC/USDT</h2>
+                <div class="chart-container">
+                    <canvas id="price-chart"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <button class="btn-refresh" onclick="refreshData()">
+                🔄 Обновить
+            </button>
+            <button class="btn-settings" onclick="openSettings()">
+                ⚙️ Настройки
+            </button>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
