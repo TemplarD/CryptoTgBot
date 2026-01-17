@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.13
 """
-CryptoTeleBot - Основной файл запуска приложения
+CryptoTgBot - Основной файл запуска приложения
 """
 
 import asyncio
@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import router as api_router
 from config_manager.settings import get_settings
-from telegram_bot.bot import CryptoTeleBot
+from telegram_bot.bot import CryptoTgBot
 
 
 # Настройка логирования
@@ -27,16 +27,16 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Управление жизненным циклом приложения"""
     # Запуск
-    logger.info("Запуск CryptoTeleBot...")
+    logger.info("Запуск CryptoTgBot...")
     
     # Инициализация Telegram бота в фоне
-    telegram_bot = CryptoTeleBot()
+    telegram_bot = CryptoTgBot()
     bot_task = asyncio.create_task(telegram_bot.start())
     
     yield
     
     # Остановка
-    logger.info("Остановка CryptoTeleBot...")
+    logger.info("Остановка CryptoTgBot...")
     bot_task.cancel()
     try:
         await bot_task
@@ -46,7 +46,7 @@ async def lifespan(app: FastAPI):
 
 # Создание FastAPI приложения
 app = FastAPI(
-    title="CryptoTeleBot API",
+    title="CryptoTgBot API",
     description="API для Telegram бота криптовалютной торговли",
     version="1.0.0",
     lifespan=lifespan
@@ -68,13 +68,13 @@ app.include_router(api_router, prefix="/api/v1")
 @app.get("/")
 async def root():
     """Корневой эндпоинт"""
-    return {"message": "CryptoTeleBot API работает!", "version": "1.0.0"}
+    return {"message": "CryptoTgBot API работает!", "version": "1.0.0"}
 
 
 @app.get("/health")
 async def health_check():
     """Проверка здоровья сервиса"""
-    return {"status": "healthy", "service": "CryptoTeleBot"}
+    return {"status": "healthy", "service": "CryptoTgBot"}
 
 
 if __name__ == "__main__":

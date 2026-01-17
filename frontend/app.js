@@ -1,4 +1,4 @@
-// CryptoTeleBot Frontend Application
+// CryptoTgBot Frontend Application
 
 const tg = window.Telegram.WebApp;
 

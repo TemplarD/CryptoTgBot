@@ -1,5 +1,5 @@
 """
-Telegram бот для CryptoTeleBot
+Telegram бот для CryptoTgBot
 """
 
 import os
@@ -14,7 +14,7 @@ from config_manager.settings import get_settings
 logger = logging.getLogger(__name__)
 
 
-class CryptoTeleBot:
+class CryptoTgBot:
     """Основной класс Telegram бота"""
     
     def __init__(self):
@@ -66,7 +66,7 @@ class CryptoTeleBot:
                 ]
                 
                 await event.reply(
-                    '👋 Добро пожаловать в CryptoTeleBot!\n\n'
+                    '👋 Добро пожаловать в CryptoTgBot!\n\n'
                     '🤖 Ваш интеллектуальный помощник для криптовалютной торговли\n'
                     '📈 Анализ паттернов и автоматическая торговля\n'
                     '💰 Управление портфелем в Telegram Mini App\n\n'
@@ -82,7 +82,7 @@ class CryptoTeleBot:
         async def help_handler(event):
             """Обработчик команды /help"""
             help_text = """
-🆘 **Помощь по CryptoTeleBot**
+🆘 **Помощь по CryptoTgBot**
 
 **Основные команды:**
 /start - Запуск бота и открытие интерфейса
@@ -109,7 +109,7 @@ class CryptoTeleBot:
             try:
                 # TODO: добавить проверку статуса сервисов
                 status_text = """
-📊 **Статус CryptoTeleBot**
+📊 **Статус CryptoTgBot**
 
 🟢 **Бот:** Активен
 🟡 **База данных:** Подключается

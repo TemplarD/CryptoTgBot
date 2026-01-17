@@ -1,5 +1,5 @@
 """
-Настройки приложения CryptoTeleBot
+Настройки приложения CryptoTgBot
 """
 
 import os
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     """Основные настройки приложения"""
     
     # Приложение
-    app_name: str = "CryptoTeleBot"
+    app_name: str = "CryptoTgBot"
     debug: bool = False
     version: str = "1.0.0"
     
