@@ -20,10 +20,6 @@ statrs = "0.16"  # Статистические функции
 pyo3 = { version = "0.22", features = ["extension-module"] }
 numpy = "0.22"
 
-# Для работы с TON
-ton-labs-client = "0.3"
-ton-labs-abi = "0.3"
-
 # Для работы с данными
 reqwest = { version = "0.12", features = ["json"] }
 

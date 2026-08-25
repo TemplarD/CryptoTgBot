@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from .wallet import router as wallet_router
 from .trading import router as trading_router
+from .strategies import router as strategies_router
 from .auth import get_current_user
 
 router = APIRouter()
@@ -15,6 +16,7 @@ security = HTTPBearer()
 # Включаем дочерние роутеры
 router.include_router(wallet_router, prefix="/wallet", tags=["wallet"])
 router.include_router(trading_router, prefix="/trading", tags=["trading"])
+router.include_router(strategies_router, prefix="/strategies", tags=["strategies"])
 
 
 @router.get("/me")

@@ -14,6 +14,11 @@ from api.routes import router as api_router
 from config_manager.settings import get_settings
 from telegram_bot.bot import CryptoTgBot
 
+# Импорт пакета strategies регистрирует все стратегии в глобальном реестре
+from trading.registry import registry
+from trading.strategies import MACrossStrategy, AINewsStrategy  # noqa: F401  (регистрация)
+from trading.engine import StrategyEngine
+
 
 # Настройка логирования
 logging.basicConfig(
@@ -32,6 +37,19 @@ async def lifespan(app: FastAPI):
     # Инициализация Telegram бота в фоне
     telegram_bot = CryptoTgBot()
     bot_task = asyncio.create_task(telegram_bot.start())
+
+    # Инициализация движка стратегий (реестр уже заполнен импортом выше)
+    strategy_engine = StrategyEngine(registry, config={
+        "min_trade_usdt": 1.0,          # микро-суммы от $1 (депозиты от $2)
+        "max_position_pct": 0.95,
+        "commission_rate": 0.001,       # ~0.1% taker на Binance
+        "commission_buffer": 3.0,
+        "take_profit_pct": 0.02,
+        "stop_loss_pct": 0.015,
+        "min_balance_usdt": 1.0,        # kill-switch для микро-депозита
+    })
+    app.state.strategy_engine = strategy_engine
+    app.state.strategy_registry = registry
     
     yield
     
