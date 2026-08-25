@@ -96,3 +96,63 @@ class PaperExecutor(Executor):
         self.trades.append({"side": "SELL", "price": price, "gross": gross, "fee": fee})
         return ExecResult(ok=True, order_id="paper_sell", executed_price=price, fee=fee,
                           message=f"Продано {sell_amt:.6f} по {price:.4f}, комиссия {fee:.4f}")
+
+
+class CCXTExecutor(Executor):
+    """Реальная торговля через ccxt (Binance/Bybit и т.п.) по API-ключам.
+
+    Это и есть рабочий путь автоторговли "из кошелька/биржи":
+    пользователь даёт боту API-ключ биржи с правами trade (БЕЗ вывода),
+    и бот исполняет сделки от его имени. Поддерживает спот и фьючерсы
+    (set_market_type('future')).
+
+    ccxt импортируется лениво — чтобы проект запускался без установки ccxt.
+    """
+    name = "ccxt"
+
+    def __init__(self, exchange_id: str = "binance", api_key: str = "", secret: str = "",
+                 market_type: str = "spot", commission_rate: float = 0.001,
+                 testnet: bool = True):
+        self.exchange_id = exchange_id
+        self.api_key = api_key
+        self.secret = secret
+        self.market_type = market_type
+        self.commission_rate = commission_rate
+        self.testnet = testnet
+        self._exchange = None
+
+    def _get_exchange(self):
+        if self._exchange is None:
+            import ccxt  # ленивый импорт
+            cls = getattr(ccxt, self.exchange_id)
+            cfg = {"apiKey": self.api_key, "secret": self.secret, "enableRateLimit": True}
+            if self.testnet and hasattr(cls, "set_sandbox_mode"):
+                ex = cls(cfg)
+                ex.set_sandbox_mode(True)
+                self._exchange = ex
+            else:
+                self._exchange = cls(cfg)
+            if self.market_type == "future":
+                # для фьючерсов нужен соответствующий маркет (у binance: swap)
+                self._exchange.options["defaultType"] = "swap"
+        return self._exchange
+
+    async def execute(self, signal: TradeSignal, price: float) -> ExecResult:
+        ex = self._get_exchange()
+        side = "buy" if signal.action == Action.BUY else "sell"
+        # размер в базовой валюте: amount — это USDT, переводим в кол-во
+        amount_base = signal.amount / price if price > 0 else 0.0
+        # округление под лот биржи — упрощённо; ccxt сам вернёт ошибку при
+        # неправильном лоте, в проде надо брать ex.markets[symbol]['limits']
+        try:
+            order = await ex.create_order(signal.symbol, "market", side, amount_base)
+            fee = float(order.get("fee", {}).get("cost", 0.0) or 0.0)
+            return ExecResult(
+                ok=True, order_id=str(order.get("id", "")),
+                executed_price=float(order.get("average", price)),
+                fee=fee, message=f"ccxt {side} {signal.symbol} исполнен",
+            )
+        except Exception as e:
+            logger.error(f"CCXTExecutor ошибка: {e}")
+            return ExecResult(ok=False, message=f"ccxt error: {e}")
+

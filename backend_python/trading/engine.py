@@ -142,3 +142,18 @@ class StrategyEngine:
 
     def set_balance_context(self, sig: TradeSignal, balance_usdt: float):
         sig.meta["balance_usdt"] = balance_usdt
+
+    # --- выбор исполнителя (Executor) ---
+    def make_executor(self, kind: str = "paper", **kwargs):
+        """Фабрика исполнителей.
+
+        kind:
+          'paper' -> PaperExecutor (песочница, без реальных денег)
+          'ccxt'  -> CCXTExecutor (реальная биржа по API-ключам; kwargs:
+                     exchange_id, api_key, secret, market_type, testnet)
+        Позже: 'tonconnect' -> TonConnectExecutor (TON DEX из Mini App).
+        """
+        from .executor import PaperExecutor, CCXTExecutor
+        if kind == "ccxt":
+            return CCXTExecutor(**kwargs)
+        return PaperExecutor(**kwargs)
