@@ -166,3 +166,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Локальные LLM-модели (GGUF) не коммитим
+*.gguf
